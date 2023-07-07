@@ -31,7 +31,11 @@ async function run() {
 
     const taskCollection = client.db('toDoListProject').collection("tasks");
 
-        
+        app.get('/tasks', async (req, res) => {
+            const cursor = taskCollection.find()
+            const result = await cursor.toArray();
+            res.send(result)
+        })
 
         app.post('/tasks', async (req, res) => {
             const task = req.body;
