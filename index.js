@@ -37,6 +37,7 @@ async function run() {
             res.send(result)
         })
 
+        //For single task data
         app.get('/tasks/:id', async(req, res) => {
           const id = req.params.id;
           const query = {_id: new ObjectId(id)}
@@ -58,6 +59,25 @@ async function run() {
           const query = {_id: new ObjectId(id)};
           const result = await taskCollection.deleteOne(query)
           res.send(result);
+      })
+
+      app.put('/tasks/:id', async(req, res) => {
+        const id = req.params.id;
+        const updatedTask = req.body;
+        console.log(id, updatedTask);
+        const filter = {_id: new ObjectId(id)}
+        const options = {upsert:true}
+        const updatedUser = {
+            $set: {
+                title: updatedTask.title,
+                date: updatedTask.date,
+                status: updatedTask.status,
+                description: updatedTask.description
+            }
+        }
+
+        const result = await taskCollection.updateOne(filter, updatedUser, options );
+        res.send(result);
       })
 
 
