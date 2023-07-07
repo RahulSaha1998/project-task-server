@@ -30,6 +30,7 @@ async function run() {
     await client.connect();
 
     const taskCollection = client.db('toDoListProject').collection("tasks");
+    const userCollection = client.db('toDoListProject').collection("users");
 
         app.get('/tasks', async (req, res) => {
             const cursor = taskCollection.find()
@@ -52,7 +53,6 @@ async function run() {
             res.send(result);
         })
 
-
         app.delete('/tasks/:id', async(req, res) => {
           const id = req.params.id;
           console.log('please delete from database', id);
@@ -60,6 +60,19 @@ async function run() {
           const result = await taskCollection.deleteOne(query)
           res.send(result);
       })
+
+      app.post('/users', async (req, res) => {
+        const user = req.body;
+        const query = { email: user.email }
+        const existingUser = await userCollection.findOne(query);
+
+        if (existingUser) {
+            return res.send({ message: 'user already exists' })
+        }
+
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+    });
 
       app.put('/tasks/:id', async(req, res) => {
         const id = req.params.id;
